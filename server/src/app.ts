@@ -42,7 +42,7 @@ export class App {
 
     private registercontrollers(): void {
         new UserController().registerController(this.app, '/api/user/');
-        new QuestionController().registerController(this.app, '/api/question');
+        new QuestionController().registerController(this.app, '/api/question/');
 
     }
 }

@@ -14,8 +14,8 @@ export class QuestionController {
      */
 
     public registerController(app: Express.Express, path: string): void {
-        app.get(path + '/', AuthMiddleware.checkToken, this.getQuestions.bind(this));
-        app.post(path + '/', AuthMiddleware.checkToken, this.postAnswer.bind(this));
+        app.get(path + 'generate', AuthMiddleware.checkToken, this.getQuestions.bind(this));
+        app.post(path + 'answer', AuthMiddleware.checkToken, this.postAnswer.bind(this));
     }
 
     public async getQuestions(request: any, response: Express.Response) {
@@ -50,6 +50,8 @@ export class QuestionController {
             response.contentType(CONTENT_APPLICATION_JSON);
             response.json({ "code": STATUS_BAD_REQUEST, "message": "Missing parameters" });
         }
+
+        console.log(request.session.questions);
 
         //Save the answer in the question
         request.session.questions[id]['answer'] = answer;
