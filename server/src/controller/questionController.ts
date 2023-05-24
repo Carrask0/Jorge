@@ -42,7 +42,7 @@ export class QuestionController {
     public postAnswer(request: any, response: Express.Response): void {
 
         //Id and answer are sent in the body of the request
-        const id: number = request.body.id || null;
+        const id: number = request.body.id !== undefined ? request.body.id : null;
         const answer: string = request.body.answer || null;
 
         if (id == null || answer == null) {
@@ -63,7 +63,10 @@ export class QuestionController {
             if (id < 9) {
                 request.session.questions[id + 1]['timeStart'] = Date.now();
             } else {
-                console.log(request.session.questions);
+
+                //Calcular metricas
+                //request.session.score = 0;
+                //request.session.time = 0;
             }
 
             response.status(STATUS_OK);
