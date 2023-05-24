@@ -45,7 +45,7 @@ export class QuestionController {
         const id: number = request.body.id || null;
         const answer: string = request.body.answer || null;
 
-        if (!id || !answer) {
+        if (id == null || answer == null) {
             response.status(STATUS_BAD_REQUEST);
             response.contentType(CONTENT_APPLICATION_JSON);
             response.json({ "code": STATUS_BAD_REQUEST, "message": "Missing parameters" });
