@@ -49,6 +49,7 @@ export class QuestionController {
             response.status(STATUS_BAD_REQUEST);
             response.contentType(CONTENT_APPLICATION_JSON);
             response.json({ "code": STATUS_BAD_REQUEST, "message": "Missing parameters" });
+            return;
         }
 
         console.log(request.session.questions);
