@@ -24,33 +24,23 @@ export class UserModel {
     }
 
     public async login(username: string, password: string): Promise<String> {
-
         try {
-            //Find user in database
-            this.User.findOne({ username: username }, (error: any, user: any) => {
-                if (error) {
-                    return Promise.reject(error);
-                }
-                if (!user) {
-                    return Promise.reject("User not found");
-                }
-                //Compare password
-                bcrypt.compare(password, user.password, (error: any, result: any) => {
-                    if (error) {
-                        return Promise.reject(error);
-                    }
-                    if (!result) {
-                        return Promise.reject("Invalid password");
-                    }
-                });
-            }
-            );
+          const user = await this.User.findOne({ username: username }).exec();
+          if (!user) {
+            return Promise.reject("User not found");
+          }
+      
+          const result = await bcrypt.compare(password, user.password);
+          if (!result) {
+            return Promise.reject("Invalid password");
+          }
+      
+          return Promise.resolve(this.generateToken(username));
         } catch (error) {
-            return Promise.reject(error);
+          return Promise.reject(error);
         }
-
-        return Promise.resolve(this.generateToken(username));
-    }
+      }
+      
 
     public generateToken(username: string): String {
 
