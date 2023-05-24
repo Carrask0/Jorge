@@ -53,15 +53,30 @@ export class QuestionController {
 
         console.log(request.session.questions);
 
-        //Save the answer in the question
-        request.session.questions[id]['answer'] = answer;
-        request.session.questions[id]['timeEnd'] = Date.now();
+        try {
+            //Save the answer in the question
+            request.session.questions[id]['answer'] = answer;
+            request.session.questions[id]['timeEnd'] = Date.now();
 
-        //If id < 9, startTime of the next question is the endTime of the current question
-        if (id < 9) {
-            request.session.questions[id + 1]['timeStart'] = Date.now();
-        } else {
-            console.log(request.session.questions);
+            //If id < 9, startTime of the next question is the endTime of the current question
+            if (id < 9) {
+                request.session.questions[id + 1]['timeStart'] = Date.now();
+            } else {
+                console.log(request.session.questions);
+            }
+
+            response.status(STATUS_OK);
+            response.contentType(CONTENT_APPLICATION_JSON);
+            response.json({ "code": STATUS_OK, "message": "Answer saved" });
+            return;
+        } catch (error) {
+            console.log(error);
+            response.status(STATUS_INTERNAL_SERVER_ERROR);
+            response.contentType(CONTENT_APPLICATION_JSON);
+            response.json({ "code": STATUS_INTERNAL_SERVER_ERROR, "message": error });
+            return;
         }
+
+
     }
 }
