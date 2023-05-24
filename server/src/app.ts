@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import UserData from "./model/dbUser";
 
 import { UserController } from "./controller/userController";
+import { QuestionController } from "./controller/questionController";
 
 export class App {
     private app: Express.Express;
@@ -41,5 +42,7 @@ export class App {
 
     private registercontrollers(): void {
         new UserController().registerController(this.app, '/api/user/');
+        new QuestionController().registerController(this.app, '/api/question');
+
     }
 }
