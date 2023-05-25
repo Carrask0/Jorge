@@ -21,6 +21,7 @@ export class UserController {
         app.post(path + 'login', this.login.bind(this));
         app.get(path + 'logout', AuthMiddleware.checkToken, this.logout.bind(this));
         app.get(path + 'check', AuthMiddleware.checkToken, this.check.bind(this));
+        app.get(path + 'leaderboard', AuthMiddleware.checkToken, this.leaderboard.bind(this));
     }
 
     public register(request: Express.Request, response: Express.Response): void {
@@ -92,5 +93,27 @@ export class UserController {
         response.contentType(CONTENT_APPLICATION_JSON);
         response.json({ "code": STATUS_OK, "message": "Token valid" });
         return;
+    }
+
+    public leaderboard(request: any, response: Express.Response): void {
+
+        const score = request.session.score;
+
+        request.session.score = null;
+        request.session.questions = null;
+
+        UserController.userModel.getLeaderboard()
+            .then((result: any) => {
+                response.status(STATUS_OK);
+                response.contentType(CONTENT_APPLICATION_JSON);
+                response.json({ "code": STATUS_OK, "message": result, "last_score": score });
+                return;
+            })
+            .catch((error: Error) => {
+                response.status(STATUS_INTERNAL_SERVER_ERROR);
+                response.contentType(CONTENT_APPLICATION_JSON);
+                response.json({ "code": STATUS_INTERNAL_SERVER_ERROR, "message": error.message });
+                return;
+            });
     }
 }

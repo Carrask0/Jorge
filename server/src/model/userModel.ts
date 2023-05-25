@@ -46,4 +46,14 @@ export class UserModel {
 
         return jwt.sign({ username: username }, 'secret', { expiresIn: 60 * 60 });
     }
+
+    public async getLeaderboard(): Promise<any> {
+        
+          try {
+              const users = await this.User.find({}).sort({ score: -1 }).exec();
+              return Promise.resolve(users);
+          } catch (error) {
+              return Promise.reject(error);
+          }
+      }
 }

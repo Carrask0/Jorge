@@ -25,19 +25,15 @@ export class QuestionController {
 
         const url = 'https://opentdb.com/api.php?amount=10';
 
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            //For question in data.results data.results[0]['time'] = Date.now();
-            data.results[0]['timeStart'] = Date.now();
-            request.session.questions = data.results;
-        } catch (error) {
-            console.log(error);
-        }
+        const responseApi = await fetch(url);
+        const data = await responseApi.json();
+        //For question in data.results data.results[0]['time'] = Date.now();
+        data.results[0]['timeStart'] = Date.now();
+        request.session.questions = data.results;
 
         response.status(STATUS_OK);
         response.contentType(CONTENT_APPLICATION_JSON);
-        response.json({ "code": STATUS_OK, "message": "Questions retrieved" });
+        response.json({ "code": STATUS_OK, "message": data.results });
         return;
 
     }
