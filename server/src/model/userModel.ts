@@ -15,7 +15,7 @@ export class UserModel {
         try {
             const salt = await bcrypt.genSalt(10);
             const hash = await bcrypt.hash(password, salt);
-            const user = new this.User({ username: username, password: hash });
+            const user = new this.User({ username: username, password: hash, score: 0 });
             await user.save();
             return Promise.resolve("User registered");
         } catch (error) {

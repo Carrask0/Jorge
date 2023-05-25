@@ -4,6 +4,7 @@ import * as Express from "express";
 
 import { STATUS_OK, STATUS_BAD_REQUEST, CONTENT_APPLICATION_JSON, STATUS_INTERNAL_SERVER_ERROR } from "../utils";
 import { AuthMiddleware } from "../auth";
+import UserData from "../model/dbUser";
 
 export class QuestionController {
 
@@ -12,6 +13,8 @@ export class QuestionController {
      * @param app Express application
      * @param path Path for the user controller
      */
+
+    public User: any = UserData;
 
     public registerController(app: Express.Express, path: string): void {
         app.get(path + 'generate', AuthMiddleware.checkToken, this.getQuestions.bind(this));
@@ -39,7 +42,7 @@ export class QuestionController {
 
     }
 
-    public postAnswer(request: any, response: Express.Response): void {
+    public async postAnswer(request: any, response: Express.Response) {
 
         //Id and answer are sent in the body of the request
         const id: number = request.body.id !== undefined ? request.body.id : null;
@@ -74,9 +77,21 @@ export class QuestionController {
                     request.session.questions[i]['score'] = Math.round(100 * grade * Math.pow(2.71828, (-0.2 * time)));
                     request.session.score += request.session.questions[i]['score'];
                 }
+
+                //Modify user score if it is higher than the previous one
+                //Find user in the database
+                const user = await this.User.findOne({ username: request.session.username }).exec();
+                if (user) {
+                    //If the user exists, check if the score is higher than the previous one
+                    if (request.session.score > user.score) {
+                        //If it is higher, update the score
+                        await this.User.updateOne({ username: request.session.username }, { score: request.session.score }).exec();
+                    }
+                }
+
                 response.status(STATUS_OK);
                 response.contentType(CONTENT_APPLICATION_JSON);
-                response.json({ "code": STATUS_OK, "message": "Quiz taken" });
+                response.json({ "code": STATUS_OK, "message": "Answer saved", "score": request.session.score });
                 return;
             }
 

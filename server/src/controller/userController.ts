@@ -62,6 +62,7 @@ export class UserController {
         UserController.userModel.login(username, password)
             .then((result: any) => {
                 request.session.token = result;
+                request.session.username = username;
                 request.session.start_time = Date.now();
                 response.status(STATUS_OK);
                 response.contentType(CONTENT_APPLICATION_JSON);
