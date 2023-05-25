@@ -31,12 +31,12 @@ export class QuestionController {
         } catch (error) {
             console.log(error);
         }
-        
+
         response.status(STATUS_OK);
         response.contentType(CONTENT_APPLICATION_JSON);
         response.json({ "code": STATUS_OK, "message": "Questions retrieved" });
         return;
-    
+
     }
 
     public postAnswer(request: any, response: Express.Response): void {
@@ -63,10 +63,21 @@ export class QuestionController {
             if (id < 9) {
                 request.session.questions[id + 1]['timeStart'] = Date.now();
             } else {
-
-                //Calcular metricas
-                //request.session.score = 0;
-                //request.session.time = 0;
+                //Calculate metrics
+                //request.session.score = n*e^(-k*t), where n=100*grade; k=0,2; t=time and e=2,71828 (Euler's number)
+                ;               // grade = 1 if answer is correct, 0 if answer is incorrect
+                // time = timeEnd - timeStart
+                request.session.score = 0;
+                for (let i = 0; i < 10; i++) {
+                    let time = request.session.questions[i]['timeEnd'] - request.session.questions[i]['timeStart'];
+                    let grade = request.session.questions[i]['answer'] == request.session.questions[i]['correct_answer'] ? 1 : 0;
+                    request.session.questions[i]['score'] = Math.round(100 * grade * Math.pow(2.71828, (-0.2 * time)));
+                    request.session.score += request.session.questions[i]['score'];
+                }
+                response.status(STATUS_OK);
+                response.contentType(CONTENT_APPLICATION_JSON);
+                response.json({ "code": STATUS_OK, "message": "Quiz taken" });
+                return;
             }
 
             response.status(STATUS_OK);
