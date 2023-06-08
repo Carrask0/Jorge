@@ -8,6 +8,7 @@ export class AuthMiddleware {
 
     public static async checkToken(request: any, response: any, next: any) {
 
+        console.log(request.session);  //Session is lost here ?????
         const token = request.session.token;
         if (!token) {
             response.status(STATUS_FORBIDDEN);

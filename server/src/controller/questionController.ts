@@ -24,7 +24,6 @@ export class QuestionController {
     public async getQuestions(request: any, response: Express.Response) {
 
         const url = 'https://opentdb.com/api.php?amount=10';
-
         const responseApi = await fetch(url);
         const data = await responseApi.json();
         //For question in data.results data.results[0]['time'] = Date.now();
